@@ -1,6 +1,7 @@
-// spell.sol - An un-owned object that performs one action one time only
+// expiringspell.sol - An un-owned object that performs one action one time only
+// before a specific time
 
-// Copyright (C) 2017, 2018 DappHub, LLC
+// Copyright (C) 2017, 2018, 2019 DappHub, LLC
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,16 +35,16 @@ contract DSExpiringSpell is DSExec, DSNote {
         data = data_;
     }
     // Only marked 'done' if CALL succeeds (not exceptional condition).
-    function cast() public note {
+    function cast() external note {
         require(!done, "ds-spell-already-cast");
         require(now <= over, "ds-spell-expired");
-        exec(whom, data, mana);
         done = true;
+        exec(whom, data, mana);
     }
 }
 
 contract DSExpiringSpellBook {
-    function make(address whom, uint256 mana, uint256 over, bytes memory data) public returns (DSExpiringSpell) {
+    function make(address whom, uint256 mana, uint256 over, bytes calldata data) external returns (DSExpiringSpell) {
         return new DSExpiringSpell(whom, mana, over, data);
     }
 }
